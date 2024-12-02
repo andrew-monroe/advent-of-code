@@ -1,0 +1,22 @@
+{
+  "version": "4",
+  "specifiers": {
+    "jsr:@std/bytes@^1.0.2": "1.0.2",
+    "jsr:@std/data-structures@*": "1.0.4",
+    "jsr:@std/streams@*": "1.0.7"
+  },
+  "jsr": {
+    "@std/bytes@1.0.2": {
+      "integrity": "fbdee322bbd8c599a6af186a1603b3355e59a5fb1baa139f8f4c3c9a1b3e3d57"
+    },
+    "@std/data-structures@1.0.4": {
+      "integrity": "fa0e20c11eb9ba673417450915c750a0001405a784e2a4e0c3725031681684a0"
+    },
+    "@std/streams@1.0.7": {
+      "integrity": "1a93917ca0c58c01b2bfb93647189229b1702677f169b6fb61ad6241cd2e499b",
+      "dependencies": [
+        "jsr:@std/bytes"
+      ]
+    }
+  }
+}
