@@ -1,26 +1,15 @@
-import { TextLineStream } from "jsr:@std/streams";
+import { expect } from "jsr:@std/expect";
 
-async function showAnswer(func: () => Promise<number>) {
-  const start = performance.now();
-  const answer = await func();
-  const end = performance.now();
-  const difference = (end - start).toFixed(2);
-  console.log(answer, `(${difference}ms)`);
+function getInput() {
+  // "new URL" syntax works in more scenarios than raw relative paths.
+  return Deno.readTextFileSync(new URL("input.txt", import.meta.url));
 }
 
-async function getInputStream() {
-  const byteStream = await Deno.open("input.txt");
-  const textStream = byteStream.readable.pipeThrough(new TextDecoderStream())
-    .pipeThrough(new TextLineStream());
-  return textStream;
-}
-
-async function part1() {
+function part1(input: string) {
   const list1 = [];
   const list2 = [];
 
-  const inputStream = await getInputStream();
-  for await (const line of inputStream) {
+  for (const line of input.split("\n")) {
     const [num1, num2] = line.split(/\s+/).map(Number);
     list1.push(num1);
     list2.push(num2);
@@ -35,12 +24,11 @@ async function part1() {
   return sumOfDifferences;
 }
 
-async function part2() {
+function part2(input: string) {
   const hash1: Record<number, number> = {};
   const hash2: Record<number, number> = {};
 
-  const inputStream = await getInputStream();
-  for await (const line of inputStream) {
+  for (const line of input.split("\n")) {
     const [num1, num2] = line.split(/\s+/).map(Number);
     hash1[num1] = num1 in hash1 ? hash1[num1] + 1 : 1;
     hash2[num2] = num2 in hash2 ? hash2[num2] + 1 : 1;
@@ -53,5 +41,28 @@ async function part2() {
   return sumOfSimilarities;
 }
 
-await showAnswer(part1);
-await showAnswer(part2);
+Deno.bench("day 01: part 1", (b) => {
+  const input = getInput();
+  b.start();
+  part1(input);
+  b.end();
+});
+
+Deno.bench("day 01: part 2", (b) => {
+  const input = getInput();
+  b.start();
+  part2(input);
+  b.end();
+});
+
+Deno.test("day 01: part 1", () => {
+  const input = getInput();
+  const answer = part1(input);
+  expect(answer).toBe(2769675);
+});
+
+Deno.test("day 01: part 2", () => {
+  const input = getInput();
+  const answer = part2(input);
+  expect(answer).toBe(24643097);
+});
