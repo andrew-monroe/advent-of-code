@@ -1,10 +1,3 @@
-import { expect } from "jsr:@std/expect";
-
-function getInput() {
-  // "new URL" syntax works in more scenarios than raw relative paths.
-  return Deno.readTextFileSync(new URL("input.txt", import.meta.url));
-}
-
 function part1(input: string) {
   const list1 = [];
   const list2 = [];
@@ -41,28 +34,11 @@ function part2(input: string) {
   return sumOfSimilarities;
 }
 
-Deno.bench("day 01: part 1", (b) => {
-  const input = getInput();
-  b.start();
-  part1(input);
-  b.end();
-});
-
-Deno.bench("day 01: part 2", (b) => {
-  const input = getInput();
-  b.start();
-  part2(input);
-  b.end();
-});
-
-Deno.test("day 01: part 1", () => {
-  const input = getInput();
-  const answer = part1(input);
-  expect(answer).toBe(2769675);
-});
-
-Deno.test("day 01: part 2", () => {
-  const input = getInput();
-  const answer = part2(input);
-  expect(answer).toBe(24643097);
-});
+onmessage = function (e) {
+  const { input, part } = e.data;
+  const output = part === 1 ? part1(input) : part2(input);
+  postMessage({
+    output,
+    part,
+  });
+}

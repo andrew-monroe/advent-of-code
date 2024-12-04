@@ -1,0 +1,115 @@
+---
+import Layout from "@/layouts/Layout.astro";
+
+// Welcome to Astro! Wondering what to do next? Check out the Astro documentation at https://docs.astro.build
+// Don't want to use any of this? Delete everything in this file, the `assets`, `components`, and `layouts` directories, and start fresh.
+const { day_number } = Astro.params;
+---
+
+<Layout>
+  <header>
+    <h1>Day {day_number}</h1>
+  </header>
+  <h2>Part 1</h2>
+  <form id="part-1">
+    <label for="input">Input</label>
+    <textarea name="input" rows="10" cols="50"></textarea>
+    <div class="output">
+      <label>Output</label>
+      <span></span>
+    </div>
+    <button class="autofill-button">Autofill</button>
+    <button class="submit-button" type="submit">Submit</button>
+  </form>
+
+  <h2>Part 2</h2>
+  <form id="part-2">
+    <label for="input">Input</label>
+    <textarea name="input" rows="10" cols="50"></textarea>
+    <div class="output">
+      <label>Output</label>
+      <span></span>
+    </div>
+    <button class="autofill-button">Autofill</button>
+    <button class="submit-button" type="submit">Submit</button>
+  </form>
+</Layout>
+<script is:inline define:vars={{ day_number }}>
+  const form1 = document.getElementById("part-1");
+  const form2 = document.getElementById("part-2");
+
+  const autofillInputPromise = fetch(`/inputs/day-${day_number}.txt`).then(
+    (res) => res.text()
+  );
+
+  form1.querySelector(".autofill-button").addEventListener("click", () => {
+    autofillInputPromise.then(
+      (input) => (form1.querySelector("textarea").textContent = input)
+    );
+  });
+  form2.querySelector(".autofill-button").addEventListener("click", () => {
+    autofillInputPromise.then(
+      (input) => (form2.querySelector("textarea").textContent = input)
+    );
+  });
+
+  const myWorker = new Worker(`/src/pages/solutions/day-${day_number}/main.ts`);
+
+  myWorker.onmessage = (e) => {
+    const { part, output } = e.data;
+    const form = part === 1 ? form1 : form2;
+
+    const outputEl = form.querySelector(".output");
+    outputEl.classList.add("show");
+    outputEl.querySelector("span").textContent = output;
+
+    const submitButton = form.querySelector(".submit-button");
+    submitButton.textContent = "Submit";
+    submitButton.disabled = false;
+  };
+
+  const requestSolution = (e) => {
+    const submitButton = e.target.querySelector(".submit-button");
+    submitButton.textContent = "Calculating...";
+    submitButton.disabled = true;
+
+    e.preventDefault();
+    const input = new FormData(e.target).get("input");
+    myWorker.postMessage({ input, part: e.target === form1 ? 1 : 2 });
+  };
+
+  form1.addEventListener("submit", requestSolution);
+  form2.addEventListener("submit", requestSolution);
+</script>
+
+<style>
+  form {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .output {
+    opacity: 0;
+    max-height: 0;
+    overflow: hidden;
+    transition:
+      opacity 0.5s ease,
+      max-height 0.5s ease;
+  }
+
+  .output.show {
+    opacity: 1;
+    max-height: 100px; /* Adjust as needed */
+  }
+
+  .autofill-button {
+    background-color: var(--bg);
+    border: 1px solid var(--accent);
+    color: var(--text);
+  }
+  .autofill-button:hover {
+    background-color: var(--accent-bg);
+    color: var(--text-light);
+  }
+</style>
