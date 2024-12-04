@@ -1,6 +1,6 @@
 
-function part1(input: string) {
-  function isSafe(report: string) {
+function part1(input) {
+  function isSafe(report) {
     const levels = report.split(" ").map(Number);
     
     if (levels.length <= 1) return true;
@@ -35,8 +35,8 @@ function part1(input: string) {
   return safeCount;
 }
 
-function part2(input: string) {
-  function threeAreGood(left: number, middle: number, right: number) {
+function part2(input) {
+  function threeAreGood(left, middle, right) {
     const leftDiff = left - middle;
     const rightDiff = middle - right;
     if (Math.abs(leftDiff) > 3 || Math.abs(leftDiff) < 1 || Math.abs(rightDiff) > 3 || Math.abs(rightDiff) < 1) {
@@ -48,7 +48,7 @@ function part2(input: string) {
     return true;
   }
 
-  function isSafe(report: string): [boolean, number] {
+  function isSafe(report) {
     const levels = report.split(" ").map(Number);
     
     if (levels.length <= 2) return [true, -1];

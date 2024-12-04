@@ -38,9 +38,9 @@ const { day_number } = Astro.params;
   const form1 = document.getElementById("part-1");
   const form2 = document.getElementById("part-2");
 
-  const autofillInputPromise = fetch(`/inputs/day-${day_number}.txt`).then(
-    (res) => res.text()
-  );
+  const autofillInputPromise = fetch(
+    `/solutions/day-${day_number}/input.txt`
+  ).then((res) => res.text());
 
   form1.querySelector(".autofill-button").addEventListener("click", () => {
     autofillInputPromise.then(
@@ -53,7 +53,7 @@ const { day_number } = Astro.params;
     );
   });
 
-  const myWorker = new Worker(`/src/pages/solutions/day-${day_number}/main.ts`);
+  const myWorker = new Worker(`/solutions/day-${day_number}/main.js`);
 
   myWorker.onmessage = (e) => {
     const { part, output } = e.data;

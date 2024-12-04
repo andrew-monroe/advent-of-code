@@ -1,4 +1,4 @@
-function part1(input: string) {
+function part1(input) {
   const list1 = [];
   const list2 = [];
 
@@ -17,9 +17,9 @@ function part1(input: string) {
   return sumOfDifferences;
 }
 
-function part2(input: string) {
-  const hash1: Record<number, number> = {};
-  const hash2: Record<number, number> = {};
+function part2(input) {
+  const hash1 = {};
+  const hash2 = {};
 
   for (const line of input.split("\n")) {
     const [num1, num2] = line.split(/\s+/).map(Number);
